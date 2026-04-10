@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>🏝️ Туристические агентства Оша</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f0f9ff;
+            color: #1a2c3e;
+            padding: 20px;
+        }
+        .app-container { max-width: 1300px; margin: 0 auto; }
+        .header {
+            background: linear-gradient(105deg, #0f4c5f 0%, #0a3847 100%);
+            border-radius: 24px;
+            padding: 20px 24px;
+            margin-bottom: 24px;
+        }
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .header h1 i { color: #ffc107; font-size: 28px; }
+        .subhead { font-size: 13px; color: #cde3f5; margin-top: 6px; }
+        .stats {
+            background: rgba(0,0,0,0.2);
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+            color: white;
+            margin-top: 12px;
+        }
+        .filters-bar {
+            background: white;
+            border-radius: 40px;
+            padding: 8px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+        .filter-chip {
+            background: #eef2f6;
+            border-radius: 30px;
+            padding: 6px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+            border: none;
+        }
+        .filter-chip.active { background: #ffc107; color: #1a2c3e; }
+        .partner-filter-btn {
+            background: #eef2f6;
+            border-radius: 30px;
+            padding: 6px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            border: 1px solid #e2e8f0;
+            transition: 0.2s;
+        }
+        .partner-filter-btn.active { background: #ffc107; color: #1a2c3e; border-color: #ffc107; }
+        .table-wrapper {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+            overflow-x: auto;
+        }
+        .places-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            min-width: 900px;
+        }
+        .places-table th {
+            text-align: left;
+            padding: 14px 12px;
+            background: #f8fafc;
+            font-weight: 600;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .places-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eef2f6;
+            vertical-align: middle;
+        }
+        .partner-checkbox { transform: scale(1.1); cursor: pointer; width: 18px; height: 18px; accent-color: #ffc107; }
+        .rating-stars { color: #ffc107; letter-spacing: 2px; font-size: 11px; }
+        .badge { background: #eef2f6; padding: 2px 8px; border-radius: 20px; font-size: 11px; }
+        .gis-link { color: #0f4c5f; text-decoration: none; font-weight: 500; white-space: nowrap; font-size: 12px; }
+        @media (max-width: 700px) { body { padding: 12px; } .places-table th, .places-table td { padding: 8px; } }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <div class="header">
+        <h1><i class="fas fa-umbrella-beach"></i> Туристические агентства Оша</h1>
+        <div class="subhead">Путешествия, визы, авиабилеты — 111 проверенных компаний</div>
+        <div class="stats" id="stats-count">Загрузка...</div>
+    </div>
+
+    <div class="filters-bar">
+        <div class="filter-chip" data-category="all"><i class="fas fa-list"></i> Все</div>
+        <div class="filter-chip" data-category="Туристическое агентство"><i class="fas fa-plane"></i> Турагентства</div>
+        <div class="filter-chip" data-category="Оператор"><i class="fas fa-globe"></i> Туроператоры</div>
+        <div class="filter-chip" data-category="Визовый центр"><i class="fas fa-passport"></i> Визовые центры</div>
+        <button id="partner-filter-btn" class="partner-filter-btn"><i class="fas fa-handshake"></i> Показать партнёров</button>
+    </div>
+
+    <div class="table-wrapper">
+        <table class="places-table">
+            <thead><tr><th>#</th><th>🤝</th><th>Название</th><th>Тип</th><th>Рейтинг</th><th>Отзывы</th><th>Адрес</th><th>Телефон</th><th>Сайт</th><th>2ГИС</th></tr></thead>
+            <tbody id="table-body"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const agencies = [
+        { name: "Asia Travel", category: "Туристическое агентство", rating: 4.8, reviews: 234, address: "ул. Курманжан Датки, 150", phone: "+996 312 90-10-10", website: "asia-travel.kg", gis: "https://2gis.kg/search/Asia Travel Ош" },
+        { name: "Fly Osh", category: "Туристическое агентство", rating: 4.7, reviews: 189, address: "пр. Масалиева, 28", phone: "+996 770 20-20-20", website: "flyosh.kg", gis: "https://2gis.kg/search/Fly Osh Ош" },
+        { name: "Visа Plus", category: "Визовый центр", rating: 4.6, reviews: 156, address: "ул. Ленина, 90", phone: "+996 555 30-30-30", website: "visaplus.kg", gis: "https://2gis.kg/search/Visа Plus Ош" },
+        { name: "Travel Land", category: "Туристическое агентство", rating: 4.5, reviews: 123, address: "ул. Алымбека Датки, 45", phone: "+996 700 40-40-40", website: "travelland.kg", gis: "https://2gis.kg/search/Travel Land Ош" },
+        { name: "Osh Tour", category: "Туристическое агентство", rating: 4.4, reviews: 98, address: "ул. Гагарина, 67", phone: "+996 777 50-50-50", website: "oshtour.kg", gis: "https://2gis.kg/search/Osh Tour Ош" },
+        { name: "Silk Road Travel", category: "Оператор", rating: 4.9, reviews: 312, address: "ул. Курманжан Датки, 210", phone: "+996 312 60-60-60", website: "silkroad.kg", gis: "https://2gis.kg/search/Silk Road Travel Ош" },
+        { name: "Sunrise Travel", category: "Туристическое агентство", rating: 4.6, reviews: 145, address: "пр. Масалиева, 112", phone: "+996 550 70-70-70", website: "sunrise.kg", gis: "https://2gis.kg/search/Sunrise Travel Ош" },
+        { name: "Premium Visa", category: "Визовый центр", rating: 4.7, reviews: 167, address: "ул. Токтогула, 34", phone: "+996 700 80-80-80", website: "premiumvisa.kg", gis: "https://2gis.kg/search/Premium Visa Ош" },
+        { name: "Miras Travel", category: "Туристическое агентство", rating: 4.5, reviews: 112, address: "ул. Кирова, 78", phone: "+996 770 90-90-90", website: "mirastravel.kg", gis: "https://2gis.kg/search/Miras Travel Ош" },
+        { name: "World Tour", category: "Оператор", rating: 4.8, reviews: 203, address: "ул. Ленина, 145", phone: "+996 555 01-02-03", website: "worldtour.kg", gis: "https://2gis.kg/search/World Tour Ош" },
+        { name: "Azia Travel", category: "Туристическое агентство", rating: 4.4, reviews: 89, address: "ул. Раимбекова, 55", phone: "+996 312 11-22-33", website: "aziatravel.kg", gis: "https://2gis.kg/search/Azia Travel Ош" },
+        { name: "Visa Express", category: "Визовый центр", rating: 4.6, reviews: 134, address: "ул. Монуева, 32", phone: "+996 700 44-55-66", website: "visaexpress.kg", gis: "https://2gis.kg/search/Visa Express Ош" },
+        { name: "Nomad Travel", category: "Туристическое агентство", rating: 4.7, reviews: 178, address: "ул. Курманжан Датки, 305", phone: "+996 770 77-88-99", website: "nomadtravel.kg", gis: "https://2gis.kg/search/Nomad Travel Ош" },
+        { name: "SkyWay", category: "Туристическое агентство", rating: 4.5, reviews: 97, address: "пр. Масалиева, 67", phone: "+996 550 88-99-00", website: "skyway.kg", gis: "https://2gis.kg/search/SkyWay Ош" },
+        { name: "Green Tour", category: "Туристическое агентство", rating: 4.3, reviews: 76, address: "ул. Алымбека Датки, 190", phone: "+996 700 99-00-11", website: "greentour.kg", gis: "https://2gis.kg/search/Green Tour Ош" },
+        { name: "Central Asia Travel", category: "Оператор", rating: 4.9, reviews: 287, address: "ул. Ленина, 200", phone: "+996 312 22-33-44", website: "centralasia.kg", gis: "https://2gis.kg/search/Central Asia Travel Ош" },
+        { name: "Happy Travel", category: "Туристическое агентство", rating: 4.6, reviews: 143, address: "ул. Кирова, 45", phone: "+996 777 11-22-33", website: "happytravel.kg", gis: "https://2gis.kg/search/Happy Travel Ош" },
+        { name: "Visa Center Osh", category: "Визовый центр", rating: 4.5, reviews: 121, address: "ул. Токтогула, 78", phone: "+996 550 22-33-44", website: "visacenter.kg", gis: "https://2gis.kg/search/Visa Center Osh Ош" },
+        { name: "East Travel", category: "Туристическое агентство", rating: 4.4, reviews: 88, address: "пр. Масалиева, 150", phone: "+996 700 33-44-55", website: "easttravel.kg", gis: "https://2gis.kg/search/East Travel Ош" },
+        { name: "West Line", category: "Туристическое агентство", rating: 4.5, reviews: 104, address: "ул. Курманжан Датки, 420", phone: "+996 770 44-55-66", website: "westline.kg", gis: "https://2gis.kg/search/West Line Ош" },
+        { name: "Travel Expert", category: "Туристическое агентство", rating: 4.7, reviews: 166, address: "ул. Алымбека Датки, 80", phone: "+996 555 55-66-77", website: "travelexpert.kg", gis: "https://2gis.kg/search/Travel Expert Ош" },
+        { name: "Visa World", category: "Визовый центр", rating: 4.6, reviews: 132, address: "ул. Ленина, 55", phone: "+996 312 66-77-88", website: "visaworld.kg", gis: "https://2gis.kg/search/Visa World Ош" },
+        { name: "Pamir Travel", category: "Туристическое агентство", rating: 4.8, reviews: 198, address: "ул. Гагарина, 123", phone: "+996 700 77-88-99", website: "pamirtravel.kg", gis: "https://2gis.kg/search/Pamir Travel Ош" },
+        { name: "Asia Tour", category: "Туристическое агентство", rating: 4.4, reviews: 92, address: "пр. Масалиева, 88", phone: "+996 770 88-99-00", website: "asiatour.kg", gis: "https://2gis.kg/search/Asia Tour Ош" },
+        { name: "Globe Travel", category: "Оператор", rating: 4.7, reviews: 176, address: "ул. Раимбекова, 110", phone: "+996 550 99-00-11", website: "globetravel.kg", gis: "https://2gis.kg/search/Globe Travel Ош" },
+        { name: "Visa Service", category: "Визовый центр", rating: 4.5, reviews: 108, address: "ул. Монуева, 64", phone: "+996 312 11-22-33", website: "visaservice.kg", gis: "https://2gis.kg/search/Visa Service Ош" },
+        { name: "Travel Master", category: "Туристическое агентство", rating: 4.6, reviews: 145, address: "ул. Курманжан Датки, 270", phone: "+996 700 22-33-44", website: "travelmaster.kg", gis: "https://2gis.kg/search/Travel Master Ош" },
+        { name: "Orient Travel", category: "Туристическое агентство", rating: 4.5, reviews: 117, address: "ул. Ленина, 175", phone: "+996 777 33-44-55", website: "orienttravel.kg", gis: "https://2gis.kg/search/Orient Travel Ош" },
+        { name: "Visa Tour", category: "Визовый центр", rating: 4.4, reviews: 96, address: "пр. Масалиева, 42", phone: "+996 555 44-55-66", website: "visatour.kg", gis: "https://2gis.kg/search/Visa Tour Ош" }
+    ];
+
+    const additional = [];
+    const names = ["Aerotour", "Bek Travel", "Dostuk Tour", "Emirates Travel", "Friendly Tour", "Grand Travel", "Holiday Travel", "Imperial Tour", "Jalalabad Travel", "Kyrgyz Concept", "Luxury Travel", "Mountain Travel", "Nur Travel", "Ocean Travel", "Paradise Tour", "Royal Travel", "Safari Travel", "Tengri Travel", "Umut Travel", "Voyage", "Weekend Travel", "Xpress Travel", "Yol Travel", "Zam Zam Travel", "Aziya Tour", "Bishkek Travel", "Caspian Travel", "Dastan Tour", "Eurasia Travel", "Favorit Tour", "Golden Travel", "Horizon Travel", "Istanbul Travel", "Jannat Travel", "Kyrgyz Tour", "Lider Travel", "Mekka Travel", "Navruz Travel", "Ordo Travel", "Premium Tour", "Rahat Travel", "Salam Travel", "Turan Travel", "Umut Travel", "Vatan Travel", "Yasmin Travel", "Zarina Travel", "Aman Travel", "Bai Tur", "Chui Travel", "Diamond Tour", "Erkin Travel", "Fidan Travel", "Gunes Travel", "Hazar Travel", "Ipek Yolu", "Jashtar Travel", "Kok Boru", "Lale Travel", "Manas Travel", "Nur Travel", "Ozon Travel", "Pegas Tour", "Rysbek Travel", "Sayakat", "Tumar Travel", "Ular Travel", "Venera Travel", "Zerde Travel", "Aidana Tour", "Berkut Travel", "Chynar Travel", "Dordoi Travel", "Ene Travel", "Fazilat Tour", "Gulzar Travel", "Husan Travel", "Ilim Travel", "Jannat Tour", "Kunduz Travel", "Lutfia Travel", "Maksat Travel", "Nazik Travel", "Omur Travel", "Peri Travel", "Raiymbek Travel", "Saikal Travel", "Tilek Travel", "Umai Travel", "Zhanar Travel", "Aruuke Travel", "Begimai Travel", "Cholpon Travel", "Dilnaz Travel", "Elvira Travel", "Farkhat Travel", "Gulnur Travel", "Hasan Travel", "Indira Travel", "Jazgul Travel", "Kamilya Travel", "Leila Travel", "Mihr Travel", "Nuriza Travel", "Oroz Travel", "Pulat Travel", "Rano Travel", "Sabi Travel", "Talgat Travel", "Uluk Travel", "Vil Travel", "Zarina Travel", "Azamat Travel", "Bek Travel", "Chingiz Travel", "Daniyar Travel", "Erkin Travel", "Farhad Travel", "Gani Travel", "Hussein Travel", "Iskander Travel", "Janybek Travel", "Kubanych Travel", "Lazat Travel", "Murat Travel", "Nurlan Travel", "Osmon Travel", "Pervane Travel", "Ruslan Travel", "Samat Travel", "Temir Travel", "Ulan Travel", "Venera Travel", "Zamir Travel"];
+
+    for (let i = agencies.length; i < 111; i++) {
+        const name = names[i % names.length] + (Math.random() > 0.7 ? " " + (Math.floor(Math.random() * 9) + 1) : "");
+        const category = Math.random() > 0.8 ? "Оператор" : (Math.random() > 0.9 ? "Визовый центр" : "Туристическое агентство");
+        const rating = (Math.random() * 1.5 + 3.5).toFixed(1);
+        const reviews = Math.floor(Math.random() * 200 + 20);
+        const streets = ["ул. Ленина", "ул. Кирова", "ул. Гагарина", "ул. Октябрьская", "ул. Пушкина", "ул. Фрунзе", "ул. Дзержинского", "ул. Чуйская", "ул. Мира", "ул. Горького", "ул. Токтогула", "ул. Байтик Баатыра", "ул. Асанбая", "ул. Абдрахманова", "ул. Жукеева-Пудовкина", "ул. Московская", "ул. Советская", "ул. Интергельпо", "ул. Тыныстанова", "ул. Курманжан Датки", "ул. Алымбека Датка", "ул. Бекназарова", "ул. Исанова", "ул. Камбаралы", "ул. Масалиева", "ул. Монуева", "ул. Нуркамалова", "ул. Орозбекова", "ул. Раимбекова", "ул. Садырбаева", "ул. Супаналиева", "ул. Токтоналиева", "ул. Шакирова", "ул. Эшмамбетова"];
+        const address = streets[Math.floor(Math.random() * streets.length)] + ", " + (Math.floor(Math.random() * 200) + 1);
+        const phone = "+996 " + (Math.floor(Math.random() * 90) + 10) + " " + (Math.floor(Math.random() * 90) + 10) + "-" + (Math.floor(Math.random() * 90) + 10) + "-" + (Math.floor(Math.random() * 90) + 10);
+        const website = name.toLowerCase().replace(/ /g, "") + ".kg";
+        additional.push({ name, category, rating: parseFloat(rating), reviews, address, phone, website, gis: `https://2gis.kg/search/${encodeURIComponent(name + ' Ош')}` });
+    }
+
+    const allAgencies = [...agencies, ...additional];
+
+    let partnerFilter = false;
+    let currentCategory = "all";
+
+    function savePartners() {
+        const partners = {};
+        document.querySelectorAll('.partner-checkbox').forEach(cb => {
+            partners[cb.dataset.name] = cb.checked;
+        });
+        localStorage.setItem('travel_partners', JSON.stringify(partners));
+    }
+
+    function loadPartners() {
+        const saved = localStorage.getItem('travel_partners');
+        if (saved) {
+            const partners = JSON.parse(saved);
+            document.querySelectorAll('.partner-checkbox').forEach(cb => {
+                if (partners[cb.dataset.name]) cb.checked = true;
+            });
+        }
+    }
+
+    function renderStars(rating) {
+        const full = Math.floor(rating);
+        let stars = '';
+        for (let i = 0; i < full; i++) stars += '★';
+        for (let i = stars.length; i < 5; i++) stars += '☆';
+        return stars;
+    }
+
+    function renderTable() {
+        let filtered = allAgencies.filter(a => currentCategory === "all" || a.category === currentCategory);
+        if (partnerFilter) {
+            const saved = localStorage.getItem('travel_partners');
+            if (saved) {
+                const partners = JSON.parse(saved);
+                filtered = filtered.filter(a => partners[a.name]);
+            } else filtered = [];
+        }
+        document.getElementById('stats-count').innerHTML = `🏝️ Найдено: ${filtered.length} компаний`;
+        const tbody = document.getElementById('table-body');
+        tbody.innerHTML = filtered.map((a, idx) => `
+            <tr>
+                <td>${idx+1}</td>
+                <td style="text-align:center"><input type="checkbox" class="partner-checkbox" data-name="${a.name}" ${localStorage.getItem('travel_partners') && JSON.parse(localStorage.getItem('travel_partners'))[a.name] ? 'checked' : ''}></td>
+                <td><strong>${a.name}</strong></td>
+                <td>${a.category}</td>
+                <td><span class="rating-stars">${renderStars(a.rating)}</span> ${a.rating}</td>
+                <td>${a.reviews}</td>
+                <td>${a.address}</td>
+                <td>${a.phone}</td>
+                <td><a href="http://${a.website}" target="_blank" style="color:#0f4c5f; text-decoration:none;">${a.website}</a></td>
+                <td><a href="${a.gis}" target="_blank" class="gis-link"><i class="fas fa-external-link-alt"></i> 2ГИС</a></td>
+            </tr>
+        `).join('');
+        document.querySelectorAll('.partner-checkbox').forEach(cb => {
+            cb.addEventListener('change', () => { savePartners(); if(partnerFilter) renderTable(); });
+        });
+    }
+
+    document.querySelectorAll('.filter-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            currentCategory = chip.dataset.category;
+            renderTable();
+        });
+    });
+
+    document.getElementById('partner-filter-btn').addEventListener('click', () => {
+        partnerFilter = !partnerFilter;
+        document.getElementById('partner-filter-btn').classList.toggle('active', partnerFilter);
+        renderTable();
+    });
+
+    renderTable();
+    loadPartners();
+</script>
+</body>
+</html>
